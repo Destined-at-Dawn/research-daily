@@ -3,7 +3,7 @@ name: 科研日报 Research Daily
 description: 科研全流程工作台——从文献输入、智能匹配、日报生成，到创新点发现、文献对比、学术写作心法的一站式科研辅助系统。
 version: 2.1
 author: 小黎 & AI
-workspace: E:\ai产出文件\牛马\创作\创作
+workspace: ./
 compatible_with: [任何读取此文件后可理解工作流的AI智能体]
 ---
 
