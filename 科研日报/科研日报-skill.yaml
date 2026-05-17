@@ -1,557 +1,436 @@
 ---
-name: 科研日报 Research Daily
-description: 科研全流程工作台——从文献输入、智能匹配、日报生成，到创新点发现、文献对比、学术写作心法的一站式科研辅助系统。
-version: 2.1
-author: 小黎 & AI
+name: research-daily
+version: 2.2.0
+description: >
+  AI-powered research decision engine for IC/EE/AI fields.
+  Five workflows: paper analysis, daily reports, innovation gap discovery,
+  writing formulas, and research guidance.
+  With error handling, state management, and checkpoint system.
+author: Destined-at-Dawn
 workspace: ./
-compatible_with: [任何读取此文件后可理解工作流的AI智能体]
+license: GPL-3.0
+homepage: https://github.com/Destined-at-Dawn/research-daily
+compatible_with: [Claude Code, any AI agent that reads this file]
+
+error_handling:
+  enabled: true
+  version: 1.0.0
+
+state_management:
+  enabled: true
+  version: 1.0.0
 ---
 
-# 科研全流程工作台（v2.0）
+# Research Daily v2.2 — Research Decision Engine
 
-> **每天 5 分钟，掌握前沿动态。**
-> **输入一篇文献，输出一片天地。**
-
----
-
-## 核心原则
-
-### 原则一：输入即分析
-用户输入任何文献信息（标题/DOI/PDF路径/笔记），AI 必须立即进行全景分析——不只是读取，而是自动关联领域内已有文献、定位其创新点、生成对比矩阵。
-
-### 原则二：对比出创新
-创新不是凭空想出来的，是比出来的。你的 vs 别人的（找差异化）、别人的 vs 别人的（找趋势与矛盾）、多篇横向对比（找空白）。每次对比都必须产出可操作的创新方向。
-
-### 原则三：从文献到写作的完整闭环
-不能"看了就忘"。每篇输入的文献必须走完：输入分析 → 纳入认知系统 → 提炼写作心法 → 可转化为论文材料。读完一篇文献，至少产出一个"可用"的东西。
+> **Every day, 5 minutes. Know what to read and why.**
 
 ---
 
-## 第一步：安装引导——个人科研画像（首次运行必做）
+## Section 1: Error Handling Framework
 
-> ⚠️ **首次使用本 Skill 时，AI 必须主动引导用户完成以下 4 个环节的问答。不得跳过。**
->
-> 用户的回答构建"个人科研画像"，写入 `配置/领域关键词.md` 的"用户画像"节。
->
-> **后续运行**：直接进入各 Workflow，不再重复画像。
-> **更新画像**：用户说"更新我的画像"或"我方向变了"→ 重新触发。
+### 1.1 Input Validation
 
-### 环节 1️⃣：领域定位
+Before processing any user input, validate against these patterns:
 
-**AI 引导话术**：
+| Input Type | Validation Pattern | On Failure |
+|-----------|-------------------|------------|
+| arXiv ID | `^\d{4}\.\d{4,5}(v\d+)?$` | "This doesn't look like a valid arXiv ID. Did you mean the full ID (e.g., 2301.12345)?" |
+| DOI | `^10\.\d{4,}/` | "This doesn't match DOI format. Try pasting the full DOI or the paper title instead." |
+| URL | `^https?://` | "Please provide a valid URL starting with http:// or https://" |
+| Paper Title | Length > 5 chars, not empty | "Please provide a paper title (at least 5 characters)." |
+| PDF Path | Ends with `.pdf`, file exists | "File not found at this path. Please check the path and try again." |
 
-> "我们先做几个简单的设置，以后每天的科研日报和分析会更精准。
->
-> **第一个问题：你的专业/研究方向是什么？**
->
-> 可以告诉我你目前最核心的 1-3 个方向，比如：集成电路设计、电气工程、AI 算法……"
+### 1.2 External Service Failure Handling
 
-**追问**：
-- "在这些方向里，有没有你最想重点追踪的细分领域？"
-- "有没有你虽然不在那个领域、但想保持关注的方向？"
+```yaml
+service_failures:
+  arxiv_api:
+    symptom: "No response or timeout from arXiv API"
+    fallback_1: "Check local reading records (科研认知/readings/)"
+    fallback_2: "Search cached paper metadata (outputs/)"
+    fallback_3: "Ask user to paste paper abstract manually"
+    user_message: "arXiv search temporarily unavailable. Checking local records first..."
+    retry: 1 time after 5 seconds
 
-### 环节 2️⃣：文献基线
+  doi_resolution:
+    symptom: "DOI resolver returns error"
+    fallback: "Search by title keywords on arXiv"
+    user_message: "DOI lookup failed. Searching by title instead..."
 
-**AI 引导话术**：
+  pdf_reading:
+    symptom: "PDF cannot be parsed"
+    fallback: "Ask user to paste abstract or key sections"
+    user_message: "Could not parse this PDF. Could you paste the abstract?"
 
-> **"第二个问题：你最近读到过让你眼前一亮的论文吗？不用多，1-3 篇就行。为什么觉得它们好？"**
->
-> 可以直接说标题，也可以把论文 PDF 或笔记的文件路径发给我。
-
-**文件处理指令**（收到路径时自动执行）：
-1. 读取文献文件（PDF/Markdown/TXT）
-2. 提取论文信息
-3. 分析用户的"好论文"共同特征
-4. 编码为个性化评分权重
-
-### 环节 3️⃣：阅读模式
-
-**AI 引导话术**：
-
-> **"第三个问题：你读一篇论文时，最关注哪个方面？**
->
-> 选 1-2 个：
-> - **方法创新**——新模型、新框架
-> - **实验效果**——SOTA、大幅提升
-> - **理论深度**——定理、证明、解释性
-> - **工程价值**——开源代码、可复现
-> - **应用前景**——落地可能性
-
-### 环节 4️⃣：创新定位
-
-**AI 引导话术**：
-
-> **"最后一个问题：你现在在追踪哪些新方向？你觉得你的领域里最大的创新机会在哪里？"**
->
-> 也可以告诉我：**有什么问题是你觉得'应该有人解决但一直没人解决'的？**
-
----
-
-## Workflow A：文献输入→智能匹配与全景分析
-
-> **用户说："帮我看看这篇论文" / 粘贴标题/DOI/PDF路径**
-
-### A1：输入接收
-
-支持以下输入格式：
-
-| 输入类型 | 示例 | AI 自动执行 |
-|---------|------|------------|
-| 论文标题 | "Attention Is All You Need" | 自动搜索 arXiv + Google Scholar |
-| DOI | "10.1038/s41586-023-06747-5" | 解析 DOI，获取完整元数据 |
-| arXiv ID | "1706.03762" | 读取 arXiv 页面 |
-| 本地PDF路径 | "D:/papers/xxx.pdf" | 读取 PDF，提取标题→搜索匹配文献 |
-| 文献笔记 | "我读了一篇关于XXX的论文..." | 从描述中提取关键词→搜索 |
-
-### A2：智能检索与匹配
-
-```
-1. 从用户输入提取关键信息（标题/作者/关键词）
-2. 并行检索：
-   - arXiv API（标题+关键词匹配）
-   - 百大认知书籍库（看是否有相关认知心法）
-   - 科研认知/readings/（看是否已有精读记录）
-3. 输出文献全景卡片
+  web_search:
+    symptom: "Web search returns no results"
+    fallback: "Broaden search terms, remove specificity"
+    user_message: "No results for this search. Trying broader terms..."
 ```
 
-### A3：文献全景卡片（输出格式）
+### 1.3 Graceful Degradation Matrix
+
+| Component | If It Fails | Degrade To | User Impact |
+|-----------|------------|------------|-------------|
+| arXiv API | Use cached data | Last known papers | Slightly stale results |
+| S/A/B Grading | Use simplified criteria | Title + venue only | Less precise grading |
+| Innovation Analysis | Skip missing dimensions | Available dimensions only | Partial analysis |
+| Writing Formula | Skip cognitive book injection | Standalone analysis | No book references |
+| Daily Report | Generate with available data | Partial report (marked) | Fewer papers |
+
+### 1.4 User-Friendly Error Messages
+
+Every error message must follow this format:
+
+```
+[What happened] + [Why it happened] + [What to do next]
+```
+
+Examples:
+- "arXiv search returned no papers matching your keywords. This might mean the keywords are too specific. Try broadening your search terms, or paste the paper title directly."
+- "The DOI you provided couldn't be resolved. This sometimes happens with very new papers. Try searching by title instead."
+
+**Forbidden**: Technical jargon, stack traces, raw HTTP errors, "Error 404", "NullPointerException".
+
+---
+
+## Section 2: State Management
+
+### 2.1 Session State
+
+Track the following during each session:
+
+```yaml
+session_state:
+  papers_analyzed: []        # List of paper IDs/titles analyzed this session
+  comparison_matrix: null    # Active comparison matrix (if comparing papers)
+  current_workflow: null     # A/B/C/D/E
+  checkpoint: null           # Last completed checkpoint
+  user_profile_loaded: false # Whether user profile has been loaded
+  partial_results: {}        # Saved partial results for interrupted workflows
+```
+
+### 2.2 Checkpoint System
+
+Every workflow has mandatory checkpoints where the user must confirm before proceeding:
+
+```yaml
+checkpoints:
+  workflow_a:
+    - name: "input_validated"
+      action: "Confirm paper identity before analysis"
+      message: "I found: [paper title] by [authors] in [venue]. Is this the right paper?"
+    - name: "analysis_complete"
+      action: "Review analysis before archiving"
+      message: "Analysis complete. Review the panoramic card before I save it?"
+
+  workflow_b:
+    - name: "sources_checked"
+      action: "Confirm sources before grading"
+      message: "Found [N] papers from [sources]. Proceed with S/A/B grading?"
+    - name: "report_ready"
+      action: "Review report before archiving"
+      message: "Daily report ready. Review before saving?"
+
+  workflow_c:
+    - name: "papers_selected"
+      action: "Confirm papers for comparison"
+      message: "Will compare: [paper list]. Correct?"
+    - name: "gaps_identified"
+      action: "Review gaps before recommending"
+      message: "Found [N] innovation gaps. Review before I generate recommendations?"
+
+  workflow_d:
+    - name: "paper_confirmed"
+      action: "Confirm paper for writing analysis"
+      message: "Analyzing writing techniques in: [paper title]. Proceed?"
+    - name: "techniques_extracted"
+      action: "Review techniques before saving"
+      message: "Extracted [N] writing techniques. Review before archiving?"
+
+  workflow_e:
+    - name: "review_scope"
+      action: "Confirm review scope"
+      message: "Reviewing: [scope]. Is this correct?"
+    - name: "review_complete"
+      action: "Review feedback before delivery"
+      message: "Peer review simulation complete. Review feedback before I present it?"
+```
+
+### 2.3 State Persistence
+
+| State | Storage Location | Format | Update Frequency |
+|-------|-----------------|--------|-----------------|
+| User Profile | `配置/领域关键词.md` | Markdown | On onboarding / profile update |
+| Session State | In-memory (session) | Internal | Per workflow step |
+| Analysis Cache | `outputs/` | Markdown files | On workflow completion |
+| Comparison Matrix | In-memory (session) | Internal | On multi-paper analysis |
+| Error Log | `outputs/error_log.md` | Markdown | On each error |
+
+### 2.4 Interruption Recovery
+
+If a workflow is interrupted (user switches topic, session ends):
+
+1. **Save partial state** to session memory
+2. **On next interaction**, check for unsaved work:
+   ```
+   "I notice we didn't finish [workflow]. Would you like to:
+   a) Resume where we left off
+   b) Start fresh
+   c) Skip this and move on"
+   ```
+3. **Auto-expire** partial state after 24 hours (don't nag about old work)
+
+### 2.5 Concurrent Workflow Prevention
+
+Only one primary workflow can be active at a time. If the user switches mid-workflow:
+
+```
+"We're currently in the middle of [current workflow]. Would you like to:
+a) Finish current work first
+b) Save progress and switch to [new request]
+c) Discard current work and switch"
+```
+
+---
+
+## Section 3: Core Principles
+
+### Principle 1: Input = Analysis
+Any paper input (title/DOI/PDF/note) triggers immediate panoramic analysis — not just passive storage.
+
+### Principle 2: Comparison Reveals Innovation
+Innovation is discovered through structured comparison, not brainstorming.
+
+### Principle 3: Reading -> Writing Closed Loop
+Every paper must produce at least one usable output (technique, writing pattern, research direction).
+
+---
+
+## Section 4: First Run — Onboarding
+
+> **First use: guide the user through 4 steps. Skipped on subsequent uses.**
+
+### Step 1: Field Positioning
+"What are your 1-3 core research directions?"
+- Follow-up: "Any sub-fields you want to track closely?"
+- Follow-up: "Any adjacent fields you want to monitor?"
+
+### Step 2: Paper Baseline
+"Share 1-3 papers that impressed you. What made them good?"
+- On PDF input: Read -> extract -> analyze user's "impressive paper" traits -> encode as scoring weights
+- On text input: Extract keywords and quality signals
+
+### Step 3: Reading Mode
+"What do you focus on? Pick 1-2:"
+- Method Innovation / Experimental Results / Theoretical Depth / Engineering Value / Application Prospects
+
+### Step 4: Innovation Focus
+"What unsolved problems interest you? What should exist but doesn't?"
+
+---
+
+## Section 5: Workflow A — Paper Input -> Panoramic Analysis
+
+### A1: Input Reception
+
+| Input Type | Processing |
+|-----------|-----------|
+| Paper Title | Search arXiv + Google Scholar |
+| DOI | Resolve DOI -> full metadata |
+| arXiv ID | Fetch arXiv page |
+| Local PDF | Read PDF -> extract title -> search |
+| Text description | Extract keywords -> search |
+
+### A2: Smart Retrieval
+
+1. Extract key info from user input
+2. Parallel search: arXiv API + local reading records + cached analyses
+3. On service failure: see Section 1.2 fallback chain
+
+### A3: Panoramic Card Output
 
 ```markdown
-## 📋 文献全景卡片
+## Paper Panoramic Card
 
-### 基本信息
-- 标题：[全文]
-- 作者：[作者列表]
-- 发表：[期刊/会议/arXiv] | [年份]
-- DOI/链接：[URL]
+### Basic Info
+- Title: [full title]
+- Authors: [list]
+- Venue: [journal/conference/arXiv] | [year]
+- DOI/Link: [URL]
 
-### 一句话概括
-[大一学生能懂的语言]
+### One-Sentence Summary
+[Language a first-year student can understand]
 
-### 定位地图
-本论文在领域中的位置：
-- 它解決了什么核心问题？
-- 它的 baseline/对比对象是谁？
-- 它引用了哪些关键工作？（引用链）
-- 后续谁引用了它？（影响力追踪）
+### Position Map
+- Core problem solved?
+- Baseline/comparison targets?
+- Key cited works? (citation chain)
+- Who cited it since? (impact tracking)
 
-### 创新点拆解
-| 维度 | 评价 |
-|------|------|
-| 方法创新 | [新/改进/复用] [具体说明] |
-| 实验创新 | [新数据集/SOTA/消融实验] |
-| 理论创新 | [新定理/新解释/新框架] |
-| 工程创新 | [开源代码/可复现性] |
+### Innovation Dissection
+| Dimension | Assessment |
+|-----------|-----------|
+| Method Innovation | [new/improved/reused] |
+| Experimental Innovation | [new dataset/SOTA/ablation] |
+| Theoretical Innovation | [new theorem/new framework] |
+| Engineering Innovation | [open source/reproducible] |
 
-### S/A/B 评级（与科研认知系统对齐）
-[按 SAB分级标准.md 评定]
+### S/A/B Grading
+[Per SAB grading criteria]
 
-### 💡 给我的启发
-- 学到的技法：
-- 可改进的空间：
-- 与我的方向的交叉点：
-- 百大认知关联：[引用对应原句]
+### Key Takeaways
+- Techniques learned:
+- Room for improvement:
+- Cross-domain connections:
+- Cognitive book reference:
 
-### 下一步行动
-[ ] 精读全文
-[ ] 追踪引用链
-[ ] 试复现核心方法
-[ ] 转化为公众号/朋友圈内容
+### Next Steps
+[ ] Deep read
+[ ] Trace citation chain
+[ ] Try reproducing
+[ ] Convert to content
 ```
 
 ---
 
-## Workflow B：每日科研日报（保留 S/A/B 系统）
+## Section 6: Workflow B — Daily Report
 
-> 保留 v1.0 的完整日报生成能力，详见下方"日报模块定义"。
+### B0: Automation (Optional)
+During onboarding, ask: "Want daily auto-generation?"
+- Yes -> CronCreate: `0 8 * * *`, prompt: "generate daily report"
+- No -> Manual trigger only
 
-### B0：自动化配置（选做——安装时询问用户）
+### B1-B5: Report Pipeline
 
-**目的**：让科研日报每天自动生成并推送给用户，无需每天手动说"生成今日日报"。
+B1: Collect papers from configured sources (arXiv/IEEE/SCI)
+B2: Grade S/A/B with user profile weights
+B3: Generate decision rationale for each grade
+B4: Structure output into 6 modules
+B5: Archive + bridge to reading system
 
-**AI 引导话术**（安装引导环节完成后询问）：
+### Report Modules
 
-> **"附加问题：要不要我每天自动帮你生成科研日报？**
->
-> 设置好以后，你每天早上打开工作区就能看到当天的论文精选，不用自己动手。
->
-> - **不需要**——我每次手动说'生成今日日报'
-> - **需要，每天早上 X 点**——比如每天早上 8 点自动生成
-> - **需要，但不确定时间**——我推荐每天早上 8 点，你觉得呢？"
-
-**用户确认后自动化配置流程**：
-
-```
-1. 用户说"好，每天早上8点"
-2. AI 使用 CronCreate 工具创建每日定时任务：
-   - cron: "0 8 * * *"（每天早上8点）
-   - prompt: "生成今日科研日报"
-   - recurring: true
-   - durable: true（跨会话持久化）
-3. 同时记录到 科研日报/配置/自动化配置.md
-4. 告知用户已设置成功
-```
-
-**用户选择手动时**：
-- 不创建定时任务
-- 用户随时说"生成今日日报"→ 手动触发
-
-**取消自动化**：
-- 用户说"取消自动日报"→ 删除定时任务
-- 用户说"改时间"→ 删除旧任务 + 创建新任务
-
-### B1：信息采集
-### B2：S/A/B 分级（带用户画像权重）
-### B3：决策理由生成
-### B4：结构化输出
-### B5：存档与衔接
-
-*（详见下文「日报模块定义」节）*
+| Module | Content | Selection Criteria |
+|--------|---------|-------------------|
+| Today's Breakthrough | 1-2 items | High impact + direct relevance |
+| Frontier Papers | 3-5 S/A-tier | Grading rationale included |
+| Technical Insights | 1-2 items | Cross-paper connections |
+| Tools & Code | 0-1 items | Reproducible/learnable |
+| Tomorrow's Watch | Upcoming | Deadlines, conferences |
+| Study Notes | Extractable | Learnable from papers |
 
 ---
 
-## Workflow C：创新点发现引擎
+## Section 7: Workflow C — Innovation Gap Engine
 
-> **用户说："这篇论文的创新点是什么？" / "这个方向还有什么可以做？" / "帮我找研究空白"**
+### C1: Seven-Dimension Innovation Anatomy
 
-### C1：单篇论文创新点拆解
+1. Problem Definition — Is this a real problem?
+2. Method Design — What's genuinely new?
+3. Theoretical Framework — Is the theory sound?
+4. Experimental Validation — Is it reproducible?
+5. Data Resources — New dataset contribution?
+6. Application Scenarios — Practical value?
+7. Performance — Meaningful improvement?
 
-对任意输入论文进行七维创新解剖：
+### C2: Six Research Gap Types
 
-```markdown
-## 🔬 创新点解剖报告
+1. Theory Gap — Existing theory can't explain
+2. Method Gap — Current methods insufficient
+3. Application Gap — Tech not applied to new domain
+4. Data Gap — Missing dataset or annotation
+5. Empirical Gap — Hypothesis untested
+6. Population Gap — Unstudied groups/scenarios
 
-### 论文的核心信息
-[标题/作者/期刊]
+### C3: Innovation Strength Assessment
 
-### 七维创新分析
-| 维度 | 论文做了什么 | 现有研究的状态 | 创新程度 |
-|------|------------|--------------|---------|
-| ① 问题定义 | 解决什么问题 | 前人怎么做的 | 全新/改进/迁移 |
-| ② 方法设计 | 用什么方法解决 | 常用方法是什么 | 颠覆/优化/组合 |
-| ③ 理论框架 | 基于什么理论 | 已有理论是什么 | 新建/扩展/应用 |
-| ④ 实验验证 | 怎么证明有效 | 前人怎么证明的 | 更全面/新指标 |
-| ⑤ 数据资源 | 用了什么数据 | 之前用什么数据 | 新数据集/更大量 |
-| ⑥ 应用场景 | 用在哪 | 之前用在哪儿 | 新领域/新任务 |
-| ⑦ 性能表现 | 结果怎么样 | SOTA 是什么 | 大幅超越/持平 |
-
-### 创新定位（按 Research Gap 分类）
-□ **理论缺口**（Theory Gap）：现有理论无法解释的现象
-□ **方法缺口**（Method Gap）：现有方法不够好或不适用
-□ **应用缺口**（Application Gap）：已有方法没被用到某个领域
-□ **数据缺口**（Data Gap）：缺少某类数据或某个场景的验证
-□ **实证缺口**（Empirical Gap）：已有理论但缺实证支持
-□ **人口/场景缺口**（Population Gap）：研究对象集中在某类群体
-
-### 创新强度评估
-- 🔴 颠覆性创新（开新方向）
-- 🟡 改进性创新（做得更好）
-- 🔵 组合性创新（跨领域迁移）
-```
-
-### C2：文献对比→发现创新空间
-
-**你的论文 vs 已有文献**（用户说"我的想法和别人的有什么不同"）：
-
-```markdown
-## ⚔️ 对比分析：你的工作 vs 现有文献
-
-### 差异化矩阵
-| 对比维度 | 现有文献 A | 现有文献 B | 你的思路 | 差异化强度 |
-|---------|-----------|-----------|---------|-----------|
-| 核心假设 | ... | ... | ... | 高/中/低 |
-| 方法选择 | ... | ... | ... | 高/中/低 |
-| 实验设置 | ... | ... | ... | 高/中/低 |
-| 数据来源 | ... | ... | ... | 高/中/低 |
-
-### 创新空间识别
-✅ **你可以做的方向**（按可行性排序）：
-1. **[方向A]**：现有文献都在做X，但没有人做Y → 填补应用缺口
-   - 可行性：高/中/低
-   - 理由：[为什么可行]
-2. **[方向B]**：文献A和文献B的方法冲突，你可以验证哪个对
-   - 可行性：高/中/低
-
-### 写作策略建议
-- Introduction中如何定位你的差异化：
-- Related Work中如何对比：
-- 审稿人可能会问的问题：
-```
-
-**别人的论文 vs 别人的论文**（用户说"帮我对比这几篇论文"）：
-
-```markdown
-## 🔄 多篇文献对比分析
-
-### 对比矩阵
-| 论文 | 问题 | 方法 | 数据 | 结果 | 局限 |
-|-----|------|------|------|------|------|
-| [A] | ... | ... | ... | ... | ... |
-| [B] | ... | ... | ... | ... | ... |
-| [C] | ... | ... | ... | ... | ... |
-
-### 趋势识别
-- **共同点**：三篇都认为...
-- **矛盾点**：A的结论和B的结论不一致...
-- **盲区**：没有一篇关注到...
-- **演进趋势**：从早期的...到现在的...
-
-### 可发表的创新方向 🎯
-1. **[方法合成]**：把A的方法 + C的数据 → 新任务
-2. **[矛盾解决]**：做实验验证A和B的矛盾根源
-3. **[盲区填补]**：在D场景复现ABC的方法
-```
-
-### C3：Research Gap 推荐引擎
-
-当用户说"帮我找创新点"时，按以下框架系统推荐：
-
-```markdown
-## 🎯 创新方向推荐
-
-### 基于你的画像
-- 领域：[用户领域]
-- 侧重点：[用户阅读模式]
-
-### 推荐优先级
-
-🟢 **立即可以做**（基于已有文献的 gap）：
-1. [方向]——需要资源：[数据/代码/时间]——预估周期：[X周]
-
-🟡 **值得追踪**（需要更多文献积累）：
-1. [方向]——需要先读：[X篇论文]
-
-🔴 **长期布局**（需要新技能/新合作）：
-1. [方向]——需要学习：[X技能]
-```
+- **Disruptive**: Opens new direction
+- **Improvement**: Does it better
+- **Combination**: Cross-domain transfer
 
 ---
 
-## Workflow D：学术写作心法库
+## Section 8: Workflow D — Writing Formula Library
 
-> 从优秀论文中提炼可复用的写作方法论
+### D1: Writing Technique Extraction
 
-### D1：从论文拆解写作结构
+For each high-quality paper, extract:
+- Title format analysis
+- Abstract structure (sentence-by-sentence function)
+- Introduction strategy (triangle/hamburger structure)
+- Method section formulas
+- Results presentation techniques
+- Discussion strategies
 
-每次用户输入一篇高质量论文，自动拆解其写作技法：
-
-```markdown
-## 📝 写作技法拆解
-
-### 标题分析
-- 格式：[问题-方法-效果 / 方法-任务-贡献]
-- 可复用的模式：[...]
-- 字数：[X字]
-
-### Abstract 结构
-- 句子功能拆解：
-  1. [背景/问题]：...
-  2. [已有方法不足]：...
-  3. [本文方法]：...
-  4. [实验结果]：...
-  5. [贡献声明]：...
-- 节奏特点：[紧凑/铺垫型/开门见山]
-
-### Introduction 套路
-- 怎么引出问题：[从大场景到小问题]
-- 怎么批评已有工作：[具体指出哪方面不够]
-- 怎么定位自己的贡献：[和 baseline 的对比]
-- 写作技巧：[倒三角结构/汉堡结构]
-
-### Method 写作心法
-- 公式化表达：[可摘录的句式]
-- 图表设计策略：[图几最出彩/为什么]
-- 数学公式的引入方式：[符号说明习惯]
-
-### Result 呈现技巧
-- 对比呈现：[表格/折线图/柱状图]
-- 消融实验的设计：[哪些控制变量]
-- 可视化：[做了什么可视化/为什么这样展示]
-
-### Discussion 的高级策略
-- 局限性的写法（不露怯地承认不足）：
-- 未来工作的引导（暗示下一步发什么）：
-
-### 这篇论文最值得学的一句话写作
-[摘录+为什么这句话写得好]
-```
-
-### D2：论文各部分写作公式
+### D2: Universal Writing Formulas
 
 ```
-### Abstract 万能公式
-"While [现有工作] has achieved [X], it suffers from [Y] due to [Z].
-In this paper, we propose [方法名], which [核心创新].
-Specifically, [关键技术点].
-Experimental results on [数据集] show that our method achieves [SOTA结果],
-outperforming [baseline] by [提升幅度].
-Our code is available at [链接]."
+Abstract: "While [existing work] achieved [X], it suffers from [Y]. We propose [method], which [key innovation]. Results show [SOTA], outperforming [baseline] by [margin]."
 
-### Introduction 四段式
-P1: [大背景] + [具体问题] + [为什么重要]
-P2: [已有方法] + [为什么还不够]（引用关键文献）
-P3: [本文方法] + [核心思路] + [两个关键创新点]
-P4: [贡献总结] 1. 2. 3. + [论文组织]
-
-### Related Work 写法策略
-策略A：按主题分类（最常用）→ 适合综合性论文
-策略B：按方法演进 → 适合方法创新论文
-策略C：按矛盾对比 → 适合找空白论文
+Introduction: P1 (background + problem) -> P2 (related work + gap) -> P3 (our approach + novelty) -> P4 (contributions + paper structure)
 ```
 
-### D3：百大认知写作心法注入
+### D3: Cognitive Book Integration
 
-每次写作指导时，自动关联百大认知书籍的对应心法：
-
-| 写作环节 | 百大认知心法 | 应用方式 |
-|---------|-------------|---------|
-| 论文开头 | 「在当今…」不行 → 用具体问题切入 | 开头不要宏大叙事，从具体矛盾开始 |
-| 方法设计 | 「系统框架不是束缚」→ 框架即护栏 | Method 写清楚设计逻辑，不是流水账 |
-| 实验结果 | 「数据比形容词有力100倍」 | 用数字说话，用表格对比 |
-| Discussion | 「追求快乐的过程本身就是痛苦的」 | 承认局限性的艺术 |
+Auto-reference writing principles from the "100 Cognitive Books" collection when applicable.
 
 ---
 
-## Workflow E：科研指导
+## Section 9: Workflow E — Research Guidance
 
-> **用户说："我现在该做什么？" / "帮我审稿 / 帮我规划"**
+### E1: Stage-Aware Guidance
 
-### E1：阶段性科研指导
+| Stage | Pain Point | Guidance |
+|-------|-----------|----------|
+| Topic Selection | "What to work on?" | Gap-based recommendations |
+| Experiment Stuck | "Methods not working" | Similar method analysis |
+| Writing Difficulty | "Can't organize" | Writing templates + formulas |
+| Paper Rejected | "How to revise?" | Reviewer simulation + priorities |
+| Preparing Defense | "How to present?" | Talk structure + key points |
 
-| 用户阶段 | 核心痛点 | AI 提供的指导 |
-|---------|---------|--------------|
-| 🔵 **选题迷茫** | 不知道做什么 | 基于文献对比推荐创新方向，分析可行性 |
-| 🟡 **实验卡壳** | 方法选不对/结果不好 | 推荐类似方法，分析 baseline 对比 |
-| 🟠 **写作困难** | 不知道怎么组织论文 | 按 D 工作流提供写作心法和模板 |
-| 🔴 **投稿被拒** | 不知道怎么改 | 审稿人视角模拟，给出修改优先级 |
-| 🟢 **准备答辩** | 不知道怎么讲 | 生成演讲结构，重点突出创新点 |
+### E2: Peer Review Simulation
 
-### E2：审稿人视角模拟
-
-用户说"帮我审一下这篇论文"或"模拟审稿"：
-
-```markdown
-## 📋 模拟审稿报告
-
-### 总体评价
-[建议：强烈接收 / 接收 / 修改 / 拒稿]
-
-### 逐项评分
-| 维度 | 评分(1-5) | 评语 |
-|------|----------|------|
-| 创新性 | X/5 | ... |
-| 方法合理性 | X/5 | ... |
-| 实验充分性 | X/5 | ... |
-| 写作质量 | X/5 | ... |
-| 参考文献 | X/5 | ... |
-
-### 核心问题（必须修改）
-1. **[问题]**：[说明]
-   - **修改建议**：[具体怎么做]
-
-### 小问题（建议修改）
-...
-
-### 审稿人视角的"他为什么这么写"
-> 如果我是审稿人，我会从以下角度质疑这篇论文：
-> 1. ...
-> 2. ...
-```
-
-### E3：投稿策略指导
-
-```markdown
-## 📮 投稿策略分析
-
-### 论文定位匹配
-| 期刊/会议 | 匹配度 | 理由 | 中稿率参考 |
-|-----------|--------|------|-----------|
-| [期刊A] | 高 | 方向吻合，你的创新点够 | ☆☆☆ |
-| [期刊B] | 中 | 需要加强实验部分 | ☆☆ |
-| [会议C] | 高 |  deadline 合适，scope 匹配 | ☆☆☆ |
-
-### 推荐优先级
-1. [首选]：[理由]
-2. [备选]：[理由]
-3. [保底]：[理由]
-
-### 时间规划
-- 投稿 deadline：[日期]
-- 需要完成的实验：[X项]
-- 建议开始写的时间：[日期]
-```
+Structured review with:
+- Overall recommendation (Strong Accept / Accept / Weak Accept / Borderline / Weak Reject / Reject)
+- Per-dimension scoring (Innovation / Method / Experiment / Writing / References)
+- Mandatory fixes + suggested fixes
+- "Reviewer mindset" analysis
 
 ---
 
-## 日报模块定义（Workflow B 保留）
+## Section 10: Archive System
 
-### 🔥 今日突破（1-2 条）
-### 📄 前沿论文（3-5 条）
-### 💡 技术洞察（1-2 条）
-### 🛠️ 工具与代码（0-1 条）
-### 📅 明日关注
-### 📊 学习笔记
-
-*（详细格式与 v1.0 一致，此处省略）*
-
----
-
-## 执行流程
-
-### Step 1：判断用户需求
-
-```
-用户输入
-  │
-  ├── 论文标题/DOI/PDF路径 → Workflow A（文献输入→全景分析）
-  │
-  ├── "生成今日日报" / 系统自动触发 → Workflow B（日报生成）
-  │
-  ├── "创新点是什么" / "还有什么可以做" → Workflow C（创新点发现）
-  │
-  ├── "对比这篇和那篇" / "我的和别人有什么不同" → Workflow C2-C3（文献对比）
-  │
-  ├── "这篇论文怎么写这么好" / "学写作" → Workflow D（写作心法）
-  │
-  └── "帮我规划" / "帮我审稿" → Workflow E（科研指导）
-```
-
-### Step 2-5：对应 Workflow 执行
-
-### 存档规则
-
-所有产出统一存档：
-
-| 产出类型 | 存档位置 | 命名规则 |
-|---------|---------|---------|
-| 文献全景分析 | outputs/ | {YYYYMMDD}_文献分析_{论文缩写}_v{版本}.md |
-| 每日日报 | outputs/ | {YYYYMMDD}_科研日报_v{版本}.md |
-| 创新点报告 | outputs/ | {YYYYMMDD}_创新点_{主题}_v{版本}.md |
-| 对比分析 | outputs/ | {YYYYMMDD}_对比_{主题}_v{版本}.md |
-| 写作心法笔记 | outputs/ | {YYYYMMDD}_写作技法_{论文缩写}_v{版本}.md |
-| 科研指导记录 | outputs/ | {YYYYMMDD}_科研指导_{主题}_v{版本}.md |
+| Output Type | Location | Naming |
+|-------------|----------|--------|
+| Paper Analysis | `outputs/` | `{YYYYMMDD}_analysis_{abbrev}_v{ver}.md` |
+| Daily Report | `outputs/` | `{YYYYMMDD}_daily_report_v{ver}.md` |
+| Innovation Report | `outputs/` | `{YYYYMMDD}_gaps_{topic}_v{ver}.md` |
+| Comparison | `outputs/` | `{YYYYMMDD}_compare_{topic}_v{ver}.md` |
+| Writing Techniques | `outputs/` | `{YYYYMMDD}_writing_{abbrev}_v{ver}.md` |
+| Guidance Record | `outputs/` | `{YYYYMMDD}_guidance_{topic}_v{ver}.md` |
 
 ---
 
-## 与现有系统的衔接
+## Section 11: Cross-System Integration
 
-| 产出 | 流向 | 调用时机 |
-|------|------|---------|
-| S 级论文精读 | → 科研认知/readings/ | 用户说"精读这篇" |
-| 创新发现转化为文章 | → 公众号/ 内容流水线 | 用户说"写成文章" |
-| 学习笔记 | → 认知之书/ 对应章节 | 自动标记 |
-| 写作技法 | → 公众号/自己/技法吸收记录.md | 用户确认后 |
-| 新发现关键词 | → 配置/领域关键词.md | 用户确认后更新 |
-| 深度分析 | → 调用「AI方法论学习器」 | S 级精读时调用 |
-| 百大认知引用 | → 百大认知已学汇总.md | 自动关联 |
+| Output | Destination | Trigger |
+|--------|------------|---------|
+| S-tier papers | `科研认知/readings/` | User says "deep read" |
+| Innovation -> Article | Newsletter pipeline | User says "write article" |
+| Study Notes | Cognitive Book | Auto-tag |
+| Writing Techniques | Technique record | User confirms |
+| New Keywords | `配置/领域关键词.md` | User confirms update |
 
 ---
 
-## 版本历史
+## Version History
 
-| 版本 | 日期 | 变更 |
-|------|------|------|
-| 1.0 | 2026-04-25 | 创建：IC+EE+AI 全覆盖日报系统，S/A/B 分级+决策理由 |
-| 1.1 | 2026-04-25 | 新增安装引导：4 环节个人科研画像 |
-| **2.0** | **2026-04-25** | **重大重构**：从"日报生成器"升级为"科研全流程工作台"。新增 Workflow A（文献输入→全景分析）、Workflow C（创新点发现引擎+文献对比）、Workflow D（学术写作心法库）、Workflow E（科研指导+审稿模拟）。引入六维 Research Gap 框架、七维创新解剖模型、差异化对比矩阵。存档系统全面升级。 |
-| 2.1 | 2026-04-25 | 新增 B0 自动化配置：安装时可选择每日自动生成日报（CronCreate 定时任务），无需手动触发 |
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0 | 2026-04-25 | Initial: IC+EE+AI daily report with S/A/B grading |
+| 1.1 | 2026-04-25 | Added 4-step onboarding |
+| 2.0 | 2026-04-25 | Major rewrite: 5 workflows, 7-dim analysis, writing library |
+| 2.1 | 2026-04-25 | CronCreate automation option |
+| **2.2** | **2026-05-16** | **Error handling framework + state management + checkpoint system** |
