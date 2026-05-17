@@ -1,0 +1,34 @@
+{
+  "name": "research-daily",
+  "owner": {
+    "name": "Destined-at-Dawn"
+  },
+  "description": "AI-powered research decision engine for IC/EE/AI fields. From paper discovery to research decision, in 5 minutes a day.",
+  "plugins": [
+    {
+      "name": "research-daily",
+      "source": "./plugins/research-daily",
+      "description": "Full-lifecycle research workstation: daily reports, paper analysis, innovation gap discovery, writing formulas, and peer review simulation.",
+      "version": "2.1.0",
+      "author": {
+        "name": "Destined-at-Dawn"
+      },
+      "homepage": "https://github.com/Destined-at-Dawn/research-daily",
+      "repository": "https://github.com/Destined-at-Dawn/research-daily",
+      "license": "GPL-3.0",
+      "keywords": [
+        "research",
+        "daily-report",
+        "arXiv",
+        "paper-analysis",
+        "innovation-gap",
+        "academic-writing",
+        "peer-review",
+        "electrical-engineering",
+        "integrated-circuits",
+        "ai"
+      ],
+      "category": "research"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "research-daily",
+  "description": "AI-powered research decision engine for IC/EE/AI fields. Five workflows: paper analysis, daily reports, innovation gap discovery, writing formulas, and research guidance.",
+  "version": "2.1.0",
+  "author": {
+    "name": "Destined-at-Dawn",
+    "url": "https://github.com/Destined-at-Dawn"
+  },
+  "homepage": "https://github.com/Destined-at-Dawn/research-daily",
+  "repository": "https://github.com/Destined-at-Dawn/research-daily",
+  "license": "GPL-3.0",
+  "keywords": [
+    "research",
+    "daily-report",
+    "arXiv",
+    "paper-analysis",
+    "innovation-gap",
+    "academic-writing",
+    "peer-review",
+    "electrical-engineering",
+    "integrated-circuits",
+    "ai",
+    "mcp-skill"
+  ]
+}
