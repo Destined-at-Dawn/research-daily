@@ -158,7 +158,16 @@ graph LR
 
 ## 🚀 Quick Start
 
-### 1. Download the Skill
+### Option A: Plugin Marketplace (Recommended)
+
+```shell
+/plugin marketplace add Destined-at-Dawn/research-daily
+/plugin install research-daily@research-daily
+```
+
+### Option B: Manual Download
+
+#### 1. Download the Skill
 
 ```bash
 # Latest release
@@ -167,7 +176,7 @@ gh release download v1.0.0 \
   --pattern "*.yaml"
 ```
 
-Or grab `research-daily-skill-v2.1.yaml` from [Releases](https://github.com/Destined-at-Dawn/research-daily/releases/latest).
+Or grab the latest `.yaml` from [Releases](https://github.com/Destined-at-Dawn/research-daily/releases/latest).
 
 ### 2. Install
 
