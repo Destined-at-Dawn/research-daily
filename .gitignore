@@ -19,3 +19,27 @@ desktop.ini
 # Temp files
 *.tmp
 *.bak
+
+# === 补充：敏感文件（2026-05-27 安全审计）===
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+credentials*
+secrets*
+
+# === Node / Python ===
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# === 构建产物 ===
+dist/
+build/
+*.egg-info/
