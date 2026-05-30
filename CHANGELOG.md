@@ -16,6 +16,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2] - 2026-05-30 — Research Data Expansion
+
+### Added
+- **10 daily research reports** (May 11-22, 2026): UAV powerline inspection field, covering YOLO detection, 3DGS reconstruction, DRL path planning, multi-agent systems, LLM-assisted inspection, edge deployment
+- **109 paper metadata notes** in : structured metadata for 144 unique papers extracted from daily reports
+  - S-level (must-read): 35 papers
+  - A-level (important): 65 papers
+  - B-level (reference): 44 papers
+- New  directory for daily report outputs
+
+### Coverage
+- Domains: cs.CV, cs.RO, cs.AI, eess.SP
+- Sources: arXiv, IEEE, Springer, MDPI, Nature, Sensors
+- Time span: 2025-11 to 2026-05
+- All personal references sanitized for public repository
+
+---
+
 ## [2.1] - 2026-04-25 — Automation & Onboarding
 
 ### Added
