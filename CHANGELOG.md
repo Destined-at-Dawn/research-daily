@@ -16,6 +16,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.3] - 2026-05-30 — Survey Paper + Latest Daily Report
+
+### Added
+- **May 30 daily research report**: MLLM-driven patrol, edge deployment breakthrough (EdgeYOLO-X hardware-aware quantization), InsPLAD-v2 multi-task benchmark, SwarmInspect multi-UAV coordination
+  - 15 papers: 4 S-level, 6 A-level, 5 B-level
+  - Trend analysis: MLLM role upgrade (auxiliary -> primary), edge deployment engineering, multi-UAV real constraints, dataset standardization
+- **Comprehensive survey paper**: "A Survey of Deep Learning-Based Approaches for UAV Power Line Inspection: From Object Detection to Autonomous Decision-Making"
+  - 8 sections covering: object detection (YOLO/DETR), multimodal perception (RGB-D/LiDAR/3DGS), edge deployment (quantization/NAS/distillation), path planning (DRL/multi-agent), MLLM roles
+  - 200+ references, unified technical taxonomy
+  - Reading path recommendations for beginners and advanced researchers
+
+### Coverage Update
+- Total daily reports: 11 (May 11-22 + May 30)
+- Total paper notes: 112
+- New directions covered: Hardware-aware quantization, zero-shot anomaly detection, decentralized multi-UAV with communication constraints
+
+---
+
 ## [2.2] - 2026-05-30 — Research Data Expansion
 
 ### Added
@@ -129,4 +147,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | 1.1 | 2026-04-25 | Personalization | 4-step onboarding, user profiles |
 | 2.0 | 2026-04-25 | Research Workstation | 5 workflows, 7-dim analysis, writing library |
 | 2.1 | 2026-04-25 | Automation | CronCreate daily scheduling |
+| 2.2 | 2026-05-30 | Research Data Expansion | 10 reports, 109 paper notes |
+| 2.3 | 2026-05-30 | Survey Paper + Latest Report | Survey (200+ refs), 11th daily report |
 | Unreleased | — | Plugin Ecosystem | Marketplace integration, error handling |
