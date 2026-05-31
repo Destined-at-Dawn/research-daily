@@ -16,6 +16,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.4] - 2026-05-31 — Full May Coverage: 9 Gap Reports + 20-Day Continuous Tracking
+
+### Added
+- **9 daily research reports** filling May 19, 21, 23-29 gaps — achieving continuous daily coverage from May 11 to May 30 (20 consecutive reports)
+  - May 19: YOLO26 MoE architecture, DETR rotation detection (O2-DEIM), small object detection (FSDETR), YOLO vs DETR benchmark
+  - May 21: Thermal infrared inspection, RGB-thermal dual-stream fusion (ThermoAlign), ice/overheating detection, SubThermo-Benchmark dataset
+  - May 23: Federated learning for multi-utility collaboration (FedPower), cross-domain transfer, differential privacy (DP-Defect), self-supervised learning
+  - May 24: Visual foundation models (SAM/DINOv2/CLIP) adaptation for power scenarios, zero-shot segmentation, foundation vs. specialized models
+  - May 25: Energy management and autonomous charging, solar-assisted UAV, battery-aware scheduling, wind-optimal trajectory planning
+  - May 26: Point cloud processing and 3D detection (Point Transformer V3), LiDAR-camera fusion clearance measurement, PowerTower-3D dataset
+  - May 27: Adversarial robustness, weather degradation detection, multi-weather data augmentation, safety evaluation
+  - May 28: Digital twin and simulation environments, Sim2Real transfer learning, virtual dataset generation, predictive maintenance
+  - May 29: Multi-sensor fusion and temporal analysis, Visual-LiDAR-IMU tightly-coupled SLAM, temporal defect tracking, degradation trend prediction
+- Each report: 15 papers (4 S-level, 6 A-level, 5 B-level), 80% from last 3 months
+
+### Coverage Update
+- Total daily reports: 20 (May 11-30 continuous)
+- Total papers covered this release: 135 new papers
+- New technical directions: thermal infrared inspection, federated learning, visual foundation models (SAM/DINOv2), point cloud 3D detection, adversarial robustness, digital twin/Sim2Real, multi-sensor temporal fusion, energy-aware path planning
+- All reports use sanitized demo persona (no personal information)
+
+---
+
 ## [2.3] - 2026-05-30 — Survey Paper + Latest Daily Report
 
 ### Added
@@ -149,4 +172,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | 2.1 | 2026-04-25 | Automation | CronCreate daily scheduling |
 | 2.2 | 2026-05-30 | Research Data Expansion | 10 reports, 109 paper notes |
 | 2.3 | 2026-05-30 | Survey Paper + Latest Report | Survey (200+ refs), 11th daily report |
+| 2.4 | 2026-05-31 | Full May Coverage | 20 reports (May 11-30), 135 new papers |
 | Unreleased | — | Plugin Ecosystem | Marketplace integration, error handling |
