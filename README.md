@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔬 Research Daily
+#  Research Daily
 
 ### AI-Powered Research Report System for IC · EE · AI
 
@@ -18,7 +18,7 @@
 
 ---
 
-## 🇺🇸 English
+##  English
 
 ### Why Research Daily?
 
@@ -29,9 +29,9 @@ Nobody says: *"Read these 3, skip the rest."*
 
 ```mermaid
 graph LR
-    A["🔍 COLLECT<br/>arXiv · IEEE · SCI"] --> B["⚖️ FILTER<br/>S/A/B Grading"]
-    B --> C["🧠 DECIDE<br/>Innovation Gaps"]
-    C --> D["✍️ WRITE<br/>Academic Toolkit"]
+    A[" COLLECT<br/>arXiv · IEEE · SCI"] --> B[" FILTER<br/>S/A/B Grading"]
+    B --> C[" DECIDE<br/>Innovation Gaps"]
+    C --> D[" WRITE<br/>Academic Toolkit"]
     style A fill:#0D1B2A,stroke:#00BFA5,color:#fff
     style B fill:#0D1B2A,stroke:#00BFA5,color:#fff
     style C fill:#0D1B2A,stroke:#FF8F00,color:#fff
@@ -42,13 +42,13 @@ graph LR
 
 | Feature | What it does |
 |:--------|:-------------|
-| 📰 **Daily Research Report** | Automated paper discovery with S/A/B grading + decision rationale |
-| 📊 **Paper Panoramic Analysis** | Input title/DOI/PDF → structured analysis card |
-| 💡 **Innovation Gap Finder** | 7-dimension dissection + 6-type Research Gap framework |
-| 🔀 **Multi-Paper Comparison** | Differential matrix + trend identification |
-| ✍️ **Academic Writing Toolkit** | Writing formulas from top-journal paper teardowns |
-| 🧑‍⚖️ **Peer Review Simulator** | Reviewer-perspective feedback on your draft |
-| 📚 **Cognitive Reading System** | S/A/B tiered methodology for building research foundations |
+|  **Daily Research Report** | Automated paper discovery with S/A/B grading + decision rationale |
+|  **Paper Panoramic Analysis** | Input title/DOI/PDF → structured analysis card |
+|  **Innovation Gap Finder** | 7-dimension dissection + 6-type Research Gap framework |
+|  **Multi-Paper Comparison** | Differential matrix + trend identification |
+|  **Academic Writing Toolkit** | Writing formulas from top-journal paper teardowns |
+|  **Peer Review Simulator** | Reviewer-perspective feedback on your draft |
+|  **Cognitive Reading System** | S/A/B tiered methodology for building research foundations |
 
 ### Covered Domains
 
@@ -71,7 +71,7 @@ graph LR
 
 ---
 
-## 🇨🇳 中文
+##  中文
 
 ### 解决什么问题？
 
@@ -83,9 +83,9 @@ graph LR
 
 ```mermaid
 graph LR
-    A["🔍 获取<br/>arXiv · IEEE · SCI"] --> B["⚖️ 筛选<br/>S/A/B 分级"]
-    B --> C["🧠 决策<br/>创新点拆解"]
-    C --> D["✍️ 写作<br/>学术心法库"]
+    A[" 获取<br/>arXiv · IEEE · SCI"] --> B[" 筛选<br/>S/A/B 分级"]
+    B --> C[" 决策<br/>创新点拆解"]
+    C --> D[" 写作<br/>学术心法库"]
     style A fill:#0D1B2A,stroke:#00BFA5,color:#fff
     style B fill:#0D1B2A,stroke:#00BFA5,color:#fff
     style C fill:#0D1B2A,stroke:#FF8F00,color:#fff
@@ -106,12 +106,12 @@ graph LR
 
 | 模块 | 内容 | 筛选标准 |
 |:-----|:-----|:---------|
-| 🔥 **今日突破** | 1-2 条重大突破 | 影响力大 + 领域直接相关 |
-| 📄 **前沿论文** | 3-5 篇 S/A 级论文 | 含分级决策理由 |
-| 💡 **技术洞察** | 论文间联系/趋势/交叉方向 | 引用链追踪 + 跨领域观察 |
-| 🛠️ **工具与代码** | 开源工具/复现代码 | 可复现/可学习 |
-| 📅 **明日关注** | 截稿/会议/事件预告 | 领域相关 |
-| 📊 **学习笔记** | 可汇入认知系统的提炼 | 从论文中提取的可学点 |
+|  **今日突破** | 1-2 条重大突破 | 影响力大 + 领域直接相关 |
+|  **前沿论文** | 3-5 篇 S/A 级论文 | 含分级决策理由 |
+|  **技术洞察** | 论文间联系/趋势/交叉方向 | 引用链追踪 + 跨领域观察 |
+|  **工具与代码** | 开源工具/复现代码 | 可复现/可学习 |
+|  **明日关注** | 截稿/会议/事件预告 | 领域相关 |
+|  **学习笔记** | 可汇入认知系统的提炼 | 从论文中提取的可学点 |
 
 ### S/A/B 分级系统
 
@@ -124,7 +124,7 @@ graph LR
 ### 创新点发现：七维解剖 × 六类 Gap
 
 <details>
-<summary><b>📐 七维创新分析</b></summary>
+<summary><b> 七维创新分析</b></summary>
 
 1. 问题定义 — 这篇论文解决的问题是否是真正的问题？
 2. 方法设计 — 方法的创新在哪里？和已有方法的本质区别？
@@ -137,7 +137,7 @@ graph LR
 </details>
 
 <details>
-<summary><b>🕳️ 六类 Research Gap</b></summary>
+<summary><b> 六类 Research Gap</b></summary>
 
 1. **理论缺口** — 现有理论无法解释的现象
 2. **方法缺口** — 现有方法的性能瓶颈
@@ -156,7 +156,7 @@ graph LR
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Option A: Plugin Marketplace (Recommended)
 
@@ -202,7 +202,7 @@ Field Positioning → Paper Baseline → Reading Mode → Innovation Focus
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 research-daily/
@@ -229,11 +229,11 @@ research-daily/
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Issues and pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-## 📄 License
+##  License
 
 This project is licensed under the [GNU General Public License v3.0](LICENSE).
 
@@ -243,6 +243,6 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 
 **Built by [Destined-at-Dawn](https://github.com/Destined-at-Dawn)**
 
-*If this project helps your research, consider giving it a ⭐*
+*If this project helps your research, consider giving it a *
 
 </div>
